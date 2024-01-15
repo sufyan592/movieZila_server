@@ -69,6 +69,23 @@ exports.getAllMovies = async (req, res) => {
     });
   }
 };
+// =============================== Single Movie =============================
+
+exports.getSingleMovie = async (req, res) => {
+  try {
+    const movieId = parseInt(req.params.movieId);
+    const movie = await Movie.findByPk(movieId);
+
+    if (!movie) {
+      return res.status(404).json({ error: "Blog not found" });
+    }
+
+    res.json(movie);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 // =============================== All Movies =============================
 

@@ -6,7 +6,8 @@ const userController = require("../controller/userController");
 router
   .route("/")
   .post(movieController.upload.single("file"), movieController.createMovie)
-  .get(movieController.getAllMovies);
+  .get(movieController.getAllMovies)
+  .get(movieController.getSingleMovie);
 
 router.put(
   "/:movieId",
@@ -18,5 +19,6 @@ router.get(
   userController.auth,
   movieController.getAllFavourites
 );
+router.route("/:movieId").get(movieController.getSingleMovie);
 
 module.exports = router;
