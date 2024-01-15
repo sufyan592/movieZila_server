@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "u4hmdznvekyjctlt",
-    "password": "vmCAWbFKaDLSWD7UKsy",
-    "database": "bq1ehnuuq2nz5g5zv3rl",
-    "host": "bq1ehnuuq2nz5g5zv3rl-mysql.services.clever-cloud.com",
+    "username": "root",
+    "password": "root",
+    "database": "movie_db",
+    "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
