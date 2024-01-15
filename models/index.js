@@ -14,12 +14,12 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
   sequelize = new Sequelize(
-    process.env.db_schema,
-    process.env.db_username,
-    process.env.db_password,
+    "be7dmslbphcokx6wskrb",
+    "uxkexfjeibhrxggf",
+    "R94Ffne4RrV94ffOGkfn",
     {
       ...config,
-      host: process.env.db_host || config.host, // Use process.env.db_host if available, otherwise fall back to config.host
+      host: "be7dmslbphcokx6wskrb-mysql.services.clever-cloud.com", // Use process.env.db_host if available, otherwise fall back to config.host
     }
   );
 }
