@@ -10,3 +10,14 @@ sequelize.sync({ force: false }).then(() => {
     console.log(`App is listening on port ${port}`);
   });
 });
+// sequelize
+//   .authenticate()
+//   .then(() => {
+//     // sequelize.sync();
+//     console.log("DB connected");
+//   })
+//   .catch((err) => {
+//     // console.log("Inside catch Config Variables:", Config);
+//     console.log("Inside catch Sequilize Initialize:", sequelize);
+//     console.log("Unable to connect to the database:", err);
+//   });

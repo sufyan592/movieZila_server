@@ -14,15 +14,31 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
   sequelize = new Sequelize(
-    "be7dmslbphcokx6wskrb",
-    "uxkexfjeibhrxggf",
-    "R94Ffne4RrV94ffOGkfn",
+    process.env.db_schema,
+    process.env.db_username,
+    process.env.db_password,
     {
       ...config,
-      host: "be7dmslbphcokx6wskrb-mysql.services.clever-cloud.com", // Use process.env.db_host if available, otherwise fall back to config.host
+      host: process.env.db_host || config.host, // Use process.env.db_host if available, otherwise fall back to config.host
     }
   );
 }
+// sequelize = new Sequelize(
+//   process.env.DB_NAME,
+//   process.env.DB_USERNAME,
+//   process.env.DB_PASSWORD,
+//   {
+//     host: process.env.DB_SOCKET,
+//     // dialect: process.env.DB_DIALECT,
+//     dialectOptions: {
+//       socketPath: process.env.DB_SOCKET,
+//       requestTimeout: 10000,
+//       useUTC: true, //for reading from database
+//       dateStrings: true,
+//       typeCast: true,
+//     },
+//   }
+// );
 
 fs.readdirSync(__dirname)
   .filter((file) => {
