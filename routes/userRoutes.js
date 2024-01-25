@@ -4,6 +4,7 @@ const userController = require("../controllers/userController");
 const permissionController = require("../controllers/userPermissionController");
 const authMiddleware = require("../middlewares/auth");
 const adminMiddleware = require("../middlewares/admin");
+// const userPermissionsMiddleware = require("../middlewares/userPermissionsMiddleware");
 
 router.route("/signup").post(userController.signup);
 router.route("/login").post(userController.login);

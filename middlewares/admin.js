@@ -1,12 +1,11 @@
+const { sendError } = require("../helpers/response");
 const { User } = require("../models");
 exports.restrict = (role) => {
   return async (req, res, next) => {
-    const user = await User.findOne({ where: { id: req.user } });
+    const { userId } = req.user;
+    const user = await User.findOne({ where: { id: userId } });
     if (role !== user.role) {
-      return res.status(403).json({
-        status: "Fail",
-        message: "Un Authorized!",
-      });
+      return sendError(res, 403, "Error", "Unauthorized");
     }
     next();
   };

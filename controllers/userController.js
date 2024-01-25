@@ -1,9 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { userPermission, User, Permission } = require("../models");
-const sendEmail = require("../utils/email");
-const { sendError } = require("../constant/error-handler");
-const { sendSuccess } = require("../constant/success-handler");
+const { sendError,sendSuccess } = require("../helpers/response");
 
 // =============================== Signup User =============================
 
@@ -12,7 +10,7 @@ const { sendSuccess } = require("../constant/success-handler");
 //     const { name, email, password } = req.body;
 //     if (!name || !email || !password) {
 //       return res.status(400).json({
-//         status: "Fail",
+//         status: "Error",
 //         message: "Please provide all details!",
 //       });
 //     }
@@ -39,7 +37,7 @@ const { sendSuccess } = require("../constant/success-handler");
 //   } catch (error) {
 //     console.error(error);
 //     res.status(500).json({
-//       status: "Fail",
+//       status: "Error",
 //       error: "Internal Server Error",
 //     });
 //   }
@@ -49,7 +47,7 @@ exports.signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
-      return sendError(res, 400, "Fail", "Please enter all details.");
+      return sendError(res, 400, "Error", "Please enter all details.");
     }
 
     const existsEmail = await User.findOne({
@@ -59,7 +57,7 @@ exports.signup = async (req, res) => {
     });
 
     if (existsEmail) {
-      return sendError(res, 409, "Fail", "Email Already Exists.");
+      return sendError(res, 409, "Error", "Email Already Exists.");
     }
 
     const saltRounds = 10;
@@ -70,13 +68,6 @@ exports.signup = async (req, res) => {
       password: hashpassword,
     });
 
-    // Uncomment the following section once you have the sendEmail function implemented
-    // await sendEmail({
-    //   email: user.email,
-    //   subject: "MovieZila Registration!",
-    //   message: "Congratulations! You've registered successfully.",
-    // });
-
     return sendSuccess(
       res,
       201,
@@ -85,7 +76,7 @@ exports.signup = async (req, res) => {
     );
   } catch (error) {
     console.error(error);
-    return sendError(res, 500, "Fail", "Internal Server Error.");
+    return sendError(res, 500, "Error", "Internal Server Error.");
   }
 };
 
@@ -95,32 +86,23 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      // return res.status(400).json({
-      //   status: "Fail",
-      //   message: "Please provide all details!",
-      // });
-      return sendError(res, 400, "Fail", "Please enter all deatails.");
+      return sendError(res, 400, "Error", "Please enter all deatails.");
     }
 
     const foundUser = await User.findOne({ where: { email } });
 
     if (!foundUser) {
-      // return res
-      //   .status(404)
-      //   .json({ status: "Fail", message: "User not found" });
-      return sendError(res, 404, "Fail", "User not found.");
+      return sendError(res, 404, "Error", "User not found.");
     }
 
     const matched = await bcrypt.compare(password, foundUser.password);
 
     if (!matched) {
-      // return res
-      //   .status(401)
-      //   .json({ status: "Fail", message: "Password not matched" });
-      return sendError(res, 401, "Fail", "Credentials are wrong.");
+      return sendError(res, 401, "Error", "Credentials are wrong.");
     }
 
     const userId = foundUser.id;
+
     const userPermissions = await userPermission.findAll({
       where: { userId },
       include: [{ model: Permission, attributes: ["name"] }],
@@ -138,9 +120,15 @@ exports.login = async (req, res) => {
       }
     );
 
-    return sendSuccess(res, 200, "Success", "User found Successfully.", token);
+    return sendSuccess(
+      res,
+      200,
+      "Success",
+      "You have successfully Login.",
+      token
+    );
   } catch (error) {
-    return sendError(res, 500, "Fail", "Internel Server Error.");
+    return sendError(res, 500, "Error", "Internel Server Error.");
   }
 };
 
@@ -157,12 +145,6 @@ exports.allUsers = async (req, res) => {
       // offset,
     });
 
-    // res.status(200).json({
-    //   status: "Success",
-    //   message: "Users fetched successfully!",
-    //   count: users.length,
-    //   data: users,
-    // });
     return sendSuccess(
       res,
       200,
@@ -171,7 +153,7 @@ exports.allUsers = async (req, res) => {
       users
     );
   } catch (error) {
-    return sendError(res, 500, "Fail", "Internel Server Error.");
+    return sendError(res, 500, "Error", "Internel Server Error.");
   }
 };
 
@@ -183,21 +165,11 @@ exports.singleUser = async (req, res) => {
     const user = await User.findByPk(id);
 
     if (!user) {
-      // return res.status(404).json({
-      //   status: "Fail",
-      //   error: "User not found",
-      // });
-      return sendError(res, 404, "Fail", "User not found.");
+      return sendError(res, 404, "Error", "User not found.");
     }
-
-    // res.status(200).json({
-    //   status: "Success",
-    //   message: "User fetched successfully!",
-    //   data: user,
-    // });
     return sendSuccess(res, 200, "Success", "User found successfully!.", user);
   } catch (error) {
-    return sendError(res, 500, "Fail", "Internel Server Error.");
+    return sendError(res, 500, "Error", "Internel Server Error.");
   }
 };
 
@@ -209,20 +181,13 @@ exports.deleteUser = async (req, res) => {
     const user = await User.findByPk(id);
 
     if (!user) {
-      // return res.status(404).json({
-      //   status: "Fail",
-      //   error: "User not found",
-      // });
-      return sendError(res, 404, "Fail", "User not found.");
+      return sendError(res, 404, "Error", "User not found.");
     }
 
     await user.destroy();
-    // res.status(200).json({
-    //   status: "Success",
-    //   message: "User deleted successfully!",
-    // });
+
     return sendSuccess(res, 200, "Success", "User deleted successfully.");
   } catch (error) {
-    return sendError(res, 500, "Fail", "Internel Server Error.");
+    return sendError(res, 500, "Error", "Internel Server Error.");
   }
 };

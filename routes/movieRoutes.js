@@ -1,14 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const movieController = require("../controllers/movieController");
-const favMoviesController = require("../controllers/favirouteMoviesController");
+const favMoviesController = require("../controllers/faviroteMoviesController");
 const authMiddleware = require("../middlewares/auth");
 const fileUploadMiddleware = require("../middlewares/fileUpload");
+const checkPermissionMiddleware = require("../middlewares/checkPermissionsMiddleware");
 
 router
   .route("/")
   .post(
     authMiddleware.auth,
+    checkPermissionMiddleware.checkPermissions,
     fileUploadMiddleware.upload.single("file"),
     movieController.createMovie
   )
@@ -28,6 +30,7 @@ router.get(
 router.put(
   "/:movieId",
   authMiddleware.auth,
+  checkPermissionMiddleware.checkPermissions,
   fileUploadMiddleware.upload.single("file"),
   movieController.editMovie
 );

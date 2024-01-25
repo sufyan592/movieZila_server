@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
       });
       userPermission.belongsTo(models.Permission, {
-        foreignKey: "perId",
+        foreignKey: "permissionId",
         onDelete: "CASCADE",
       });
     }
@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         primaryKey: true,
       },
-      perId: {
+      permissionId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,

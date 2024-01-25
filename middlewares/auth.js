@@ -12,16 +12,10 @@ exports.auth = async (req, res, next) => {
       token = req.cookies.jwt;
     }
     const decode = jwt.verify(token, process.env.SECRETE_KEY);
-
-    req.user = decode.userId;
-    console.log("Decoded User:", decode.userId);
+    req.user = decode;
 
     next();
   } catch (error) {
-    res.status(500).json({
-      status: "Fail",
-      message: "You are not allowed to access this",
-      error,
-    });
+    return sendError(res, 500, "Error", "Unauthorized");
   }
 };

@@ -1,22 +1,18 @@
-const { sendSuccess } = require("../constant/success-handler");
-const { favourite_Movies, Movie, User } = require("../models");
+const { sendSuccess } = require("../helpers/response");
+const { faviroteMovies, Movie, User } = require("../models");
 
 // =============================== Faviroute Movies =============================
 
 exports.getAllFavourites = async (req, res) => {
   try {
     const userId = req.params.userId;
-    // const permissions = req.permissions;
-    // console.log(permissions);
-
     const user = await User.findByPk(userId);
     if (!user) {
-      return sendError(res, 400, "Fail", "User not found.");
+      return sendError(res, 400, "Error", "User not found.");
     }
 
-    const favourites = await favourite_Movies.findAll({
+    const favourites = await faviroteMovies.findAll({
       where: { userId: userId },
-      // include: Movie,
       include: [{ model: Movie, attributes: ["title", "publish_year", "img"] }],
     });
 
@@ -28,8 +24,7 @@ exports.getAllFavourites = async (req, res) => {
       favourites
     );
   } catch (err) {
-    console.error(err);
-    return sendError(res, 500, "Fail", "Internel Server Error.");
+    return sendError(res, 500, "Error", "Internel Server Error.");
   }
 };
 
@@ -38,12 +33,12 @@ exports.getAllFavourites = async (req, res) => {
 exports.updateFavirouteMovie = async (req, res, next) => {
   try {
     const { userId, movieId } = req.body;
-    const existingFavorite = await favourite_Movies.findOne({
+    const existingFavorite = await faviroteMovies.findOne({
       where: { userId, movieId },
     });
 
     if (!existingFavorite) {
-      await favourite_Movies.create({
+      await faviroteMovies.create({
         userId,
         movieId,
       });
@@ -55,7 +50,7 @@ exports.updateFavirouteMovie = async (req, res, next) => {
         "Movie added to favorites successfully."
       );
     } else {
-      await favourite_Movies.destroy({
+      await faviroteMovies.destroy({
         where: { userId, movieId },
       });
 
@@ -67,6 +62,6 @@ exports.updateFavirouteMovie = async (req, res, next) => {
       );
     }
   } catch (error) {
-    return sendError(res, 500, "Fail", "Internel Server Error.");
+    return sendError(res, 500, "Error", "Internel Server Error.");
   }
 };

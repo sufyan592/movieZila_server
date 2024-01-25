@@ -1,17 +1,11 @@
 const { userPermission, User, Permission } = require("../models");
-const { sendError } = require("../constant/error-handler");
-const { sendSuccess } = require("../constant/success-handler");
+const { sendError, sendSuccess } = require("../helpers/response");
 
 // =============================== All Permissions =============================
 
 exports.permissions = async (req, res) => {
   try {
     const permissions = await Permission.findAll();
-    // res.status(200).json({
-    //   status: "Success",
-    //   message: "User permissions Found successfully.",
-    //   permissions,
-    // });
     return sendSuccess(
       res,
       200,
@@ -20,7 +14,7 @@ exports.permissions = async (req, res) => {
       permissions
     );
   } catch (error) {
-    return sendError(res, 500, "Fail", "Internel Server Error.");
+    return sendError(res, 500, "Error", "Internel Server Error.");
   }
 };
 
@@ -41,7 +35,7 @@ exports.getPermissions = async (req, res) => {
 
     const permissions = userPer.map((per) => ({
       userId: per.User.id,
-      perId: per.Permission.id,
+      permissionId: per.Permission.id,
       name: per.User.name,
       email: per.User.email,
       permission: per.Permission.perName,
@@ -55,7 +49,7 @@ exports.getPermissions = async (req, res) => {
       permissions
     );
   } catch (error) {
-    return sendError(res, 500, "Fail", "Internel Server Error.");
+    return sendError(res, 500, "Error", "Internel Server Error.");
   }
 };
 
@@ -63,31 +57,23 @@ exports.getPermissions = async (req, res) => {
 
 exports.updatePermissions = async (req, res) => {
   try {
-    const { userId, perId } = req.body;
+    const { userId, permissionId } = req.body;
     const existingPermission = await userPermission.findOne({
-      where: { userId, perId },
+      where: { userId, permissionId },
     });
 
     if (!existingPermission) {
       await userPermission.create({
         userId,
-        perId,
+        permissionId,
       });
 
-      // return res.status(200).json({
-      //   success: true,
-      //   message: "Permission added successfully",
-      // });
       return sendSuccess(res, 200, "Success", "Permission added successfully.");
     } else {
       await userPermission.destroy({
-        where: { userId, perId },
+        where: { userId, permissionId },
       });
 
-      // return res.status(200).json({
-      //   success: true,
-      //   message: "Permission removed successfully",
-      // });
       return sendSuccess(
         res,
         200,
@@ -96,6 +82,6 @@ exports.updatePermissions = async (req, res) => {
       );
     }
   } catch (error) {
-    return sendError(res, 500, "Fail", "Internel Server Error.");
+    return sendError(res, 500, "Error", "Internel Server Error.");
   }
 };
