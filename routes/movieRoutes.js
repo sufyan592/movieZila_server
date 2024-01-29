@@ -10,7 +10,7 @@ router
   .route("/")
   .post(
     authMiddleware.auth,
-    checkPermissionMiddleware.checkPermissions,
+    checkPermissionMiddleware.createPermission,
     fileUploadMiddleware.upload.single("file"),
     movieController.createMovie
   )
@@ -30,9 +30,15 @@ router.get(
 router.put(
   "/:movieId",
   authMiddleware.auth,
-  checkPermissionMiddleware.checkPermissions,
+  checkPermissionMiddleware.EditPermission,
   fileUploadMiddleware.upload.single("file"),
   movieController.editMovie
+);
+router.delete(
+  "/:movieId",
+  authMiddleware.auth,
+  checkPermissionMiddleware.deletePermission,
+  movieController.deleteMovie
 );
 router.route("/:movieId").get(movieController.getSingleMovie);
 

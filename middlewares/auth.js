@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { sendError } = require("../helpers/response");
 
 exports.auth = async (req, res, next) => {
   try {

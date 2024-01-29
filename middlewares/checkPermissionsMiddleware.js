@@ -1,37 +1,38 @@
+const { sendError } = require("../helpers/response");
 const { userPermission, Permission } = require("../models");
 
-exports.checkPermissions = async (req, res, next) => {
-  try {
-    const { userPermissions, userId } = req.user;
+// exports.checkPermissions = async (req, res, next) => {
+//   try {
+//     const { userPermissions, userId } = req.user;
 
-    for (const permissionName of userPermissions) {
-      const userPermissions = await Permission.findOne({
-        where: { name: permissionName },
-      });
+//     for (const permissionName of userPermissions) {
+//       const userPermissions = await Permission.findOne({
+//         where: { name: permissionName },
+//       });
 
-      if (userPermissions) {
-        const permissions = await userPermission.findOne({
-          userId: userId,
-          permissionId: userPermission.id,
-        });
+//       if (userPermissions) {
+//         const permissions = await userPermission.findOne({
+//           userId: userId,
+//           permissionId: userPermission.id,
+//         });
 
-        if (permissions) {
-          req[`${permissionName.toLowerCase()}Permission`] = true;
-        } else {
-          console.log(`User does not have permission: ${permissionName}`);
-        }
-      } else {
-        console.log(`Permission not found: ${permissionName}`);
-      }
-    }
-    req.userId = userId;
-    req.user = null;
-    next();
-  } catch (error) {
-    console.error("Error checking permissions:", error);
-    return res.status(500).json({ message: "Server Error." });
-  }
-};
+//         if (permissions) {
+//           req[`${permissionName.toLowerCase()}Permission`] = true;
+//         } else {
+//           console.log(`User does not have permission: ${permissionName}`);
+//         }
+//       } else {
+//         console.log(`Permission not found: ${permissionName}`);
+//       }
+//     }
+//     req.userId = userId;
+//     req.user = null;
+//     next();
+//   } catch (error) {
+//     console.error("Error checking permissions:", error);
+//     return res.status(500).json({ message: "Server Error." });
+//   }
+// };
 
 // exports.userPermission = async (req, res, next) => {
 //   //   const userId = req.userId;
@@ -105,3 +106,41 @@ exports.checkPermissions = async (req, res, next) => {
 //     return res.status(500).json({ message: "Server Error." });
 //   }
 // };
+
+
+exports.createPermission = async (req, res, next) => {
+  try {
+    const { userPermissions } = req.user;
+    const permission = userPermissions.includes("create");
+    if (!permission) {
+      sendError(res, 401, "Error", "User does not have permission.");
+    }
+    next();
+  } catch (error) {
+    sendError(res, 500, "Error", "Internal Server Error.");
+  }
+};
+exports.EditPermission = async (req, res, next) => {
+  try {
+    const { userPermissions } = req.user;
+    const permission = userPermissions.includes("edit");
+    if (!permission) {
+      sendError(res, 401, "Error", "User does not have permission.");
+    }
+    next();
+  } catch (error) {
+    sendError(res, 500, "Error", "Internal Server Error.");
+  }
+};
+exports.deletePermission = async (req, res, next) => {
+  try {
+    const { userPermissions } = req.user;
+    const permission = userPermissions.includes("delete");
+    if (!permission) {
+      sendError(res, 401, "Error", "User does not have permission.");
+    }
+    next();
+  } catch (error) {
+    sendError(res, 500, "Error", "Internal Server Error.");
+  }
+};

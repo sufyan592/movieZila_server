@@ -1,5 +1,5 @@
 const { sendSuccess } = require("../helpers/response");
-const { faviroteMovies, Movie, User } = require("../models");
+const { favirote_Movies, Movie, User } = require("../models");
 
 // =============================== Faviroute Movies =============================
 
@@ -11,7 +11,7 @@ exports.getAllFavourites = async (req, res) => {
       return sendError(res, 400, "Error", "User not found.");
     }
 
-    const favourites = await faviroteMovies.findAll({
+    const favourites = await favirote_Movies.findAll({
       where: { userId: userId },
       include: [{ model: Movie, attributes: ["title", "publish_year", "img"] }],
     });
@@ -33,12 +33,12 @@ exports.getAllFavourites = async (req, res) => {
 exports.updateFavirouteMovie = async (req, res, next) => {
   try {
     const { userId, movieId } = req.body;
-    const existingFavorite = await faviroteMovies.findOne({
+    const existingFavorite = await favirote_Movies.findOne({
       where: { userId, movieId },
     });
 
     if (!existingFavorite) {
-      await faviroteMovies.create({
+      await favirote_Movies.create({
         userId,
         movieId,
       });
@@ -50,7 +50,7 @@ exports.updateFavirouteMovie = async (req, res, next) => {
         "Movie added to favorites successfully."
       );
     } else {
-      await faviroteMovies.destroy({
+      await favirote_Movies.destroy({
         where: { userId, movieId },
       });
 

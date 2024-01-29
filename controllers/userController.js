@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { userPermission, User, Permission } = require("../models");
-const { sendError,sendSuccess } = require("../helpers/response");
+const { sendError, sendSuccess } = require("../helpers/response");
 
 // =============================== Signup User =============================
 
@@ -102,6 +102,7 @@ exports.login = async (req, res) => {
     }
 
     const userId = foundUser.id;
+    const role = foundUser.role;
 
     const userPermissions = await userPermission.findAll({
       where: { userId },
@@ -113,7 +114,7 @@ exports.login = async (req, res) => {
     );
 
     const token = jwt.sign(
-      { userId: userId, userPermissions: permissionNames },
+      { userId: userId, userPermissions: permissionNames, role: role },
       process.env.SECRETE_KEY,
       {
         expiresIn: process.env.Expires_TIME,
